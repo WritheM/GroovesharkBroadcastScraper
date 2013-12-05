@@ -11,7 +11,7 @@ class SessionData
     
     public function __construct(
         $clientRevision,
-        $sessionseID,
+        $sessionID,
         $secretKey,
         $token,
         $uuid = "0EF49B00-DD49-4D01-9640-WRITHEMRADIO",

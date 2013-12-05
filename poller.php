@@ -14,40 +14,82 @@ else
     $debug = false;
 }
 
+/*
+    1 - token
+    2 - sessionID
+    2 - key
+    3 - "The rest"
+  
+A - Check session data cache integrety
+B - Update session data cache if necessary
+C - Get token for this session and cache
+D - Foreach broadcast, query with cache
+
+A - Get cached session data
+B - Attempt to get token
+B1 - If failed, refresh session data
+B2 - If success, cache token
+C - Foreach broadcast...
+
+A - get broadcaststats
+AF - renew token
+AFF - renew session
+
+*/
+
 /*   
 	DataBaseConnection db = ...
     
-    
+    Grooveshark $grooveShark = ...
 	
-	SessionData sessionData = sessionData = db->GetSessionData();
+	$grooveShark->SessionData = db->GetSessionData();
 	
-	if (sessionData == null)
+	if ($grooveShark->SessionData == null)
 	{
-        sessionData = AccquireSessionData();
+        // No session data has been cached yet, get it.
+        $grooveShark->SessionData = AccquireSessionData();
 	}  
        
-    if (sessionData != null)
+    if ($grooveShark->SessionData != null)
     {
-        $users = db->GetEnabledBroadcasts();
-        foreach ($username in users)
+        $grooveShark->Token = $grooveShark->AccquireToken();
+        
+        if ($grooveShark->Token == null)
         {
-            for (int i = 0; i < 2; i++)
+            $grooveShark->SessionData = AccquireSessionData();
+            $grooveShark->Token = $grooveShark->AccquireToken();
+        }
+    
+        if ($grooveShark->Token == null)
+        {
+            // Log message, failed to get token a second time.
+        }
+        else
+        {
+            $users = db->GetEnabledBroadcasts();
+            foreach ($username in $users)
             {
-                gsData = GrooveShark->GetData(sessionData);
-                
-                if (gsData != null)
+                try
                 {
-                    // Parse and write to db
-                    break;
+                    gsData = $grooveShark->GetData();
+                        
+                    if (gsData != null)
+                    {
+                        // Parse and write to db
+                    }
+                    else
+                    {
+                        throw new Exception("Could not get data for user.");
+                    }
                 }
-                else
+                catch ($exception)
                 {
-                    sessionData = AccquireSessionData();
-                    if (sessionData == null)
-                        break;
+                    // Log message for this user
                 }
             }
         }
+        
+        
     }
     
     function AccquireSessionData()

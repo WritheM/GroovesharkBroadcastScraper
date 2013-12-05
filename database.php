@@ -34,12 +34,12 @@ class Database
     {
         if ($parms != null)
         {
-            print "doing parameter binding...\n";
+            //print "doing parameter binding...\n";
             foreach($parms->getParameterNames() as $parameterName)
             {
                 $stmt->bindValue($parameterName, $parms->getParameterValue($parameterName));
                 
-                print "binding parameter $parameterName with " . $parms->getParameterValue($parameterName) . "\n";
+                //print "binding parameter $parameterName with " . $parms->getParameterValue($parameterName) . "\n";
             }
         }
     }
@@ -81,12 +81,24 @@ class Database
          return $result;
     }
     
-    public function __construct($maintMode = false)
+    public function __construct(
+        $host,
+        $database,
+        $user,
+        $pass,
+        $maintMode = false
+    )
     {
+        $this->initialize($host, $database, $user, $pass);
         $this->maintenanceMode = $maintMode;
     }
+    
+    public function __destruct()
+    {
+        $this->dbConnection = null;
+    }
 
-    public function openConnection($host, $database, $user, $pass)
+    private function initialize($host, $database, $user, $pass)
     {
         if ($this->dbConnection != null)
         {
@@ -107,11 +119,6 @@ class Database
             printf("<div id=\"fail_connect\">\n  <error details=\"%s\" />\n</div>\n", $e->getMessage());
         }
         */
-    }
-    
-    public function closeConnection()
-    {
-        $this->dbConnection = null;
     }
 }
 

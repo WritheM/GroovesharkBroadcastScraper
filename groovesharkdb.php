@@ -37,9 +37,9 @@ class GroovesharkDatabase extends Database
         $parms->addParameter(':name', $name);
         $parms->addParameter(':value', $value);
         $stmt = $this->execute($query, $parms);
-        print_r($stmt);
-        print_r($parms);
-        printf("%d rows affected\n",$stmt->rowCount());
+        //print_r($stmt);
+        //print_r($parms);
+        //printf("%d rows affected\n",$stmt->rowCount());
     }
     
     public function saveSessionData($sessionData)
